@@ -1,0 +1,78 @@
+# DRAWING WALKER - to be controlled directly be the child to complete a Connect The Numbers game. This robot should be equipped with a pen
+
+var sequence[] = [1,2,3,4,5]	# the expected sequence of numbers
+var sequencelength = 5	# the length of the sequence
+var pointer = 0	# points to the next expected number
+var speed = 100
+var counter = 0
+var buttons_ENABLED = 1
+
+# resetting everything that might have been used
+motor.left.target = 0
+motor.right.target = 0
+
+call leds.top(0,0,0)
+call leds.circle(0,0,0,0,0,0,0,0)
+
+call sound.system(-1)
+
+# enabling communication
+call prox.comm.enable(1)
+
+# setting the timer
+timer.period[0] = 2000
+
+# the buttons are used to navigate the robot
+onevent buttons
+	if button.forward == 1 and buttons_ENABLED == 1 then
+		motor.left.target = speed
+		motor.right.target = speed
+	end
+	if button.left == 1 and buttons_ENABLED == 1 then
+		motor.left.target = 0
+		motor.right.target = speed
+	end
+	if button.right == 1 and buttons_ENABLED == 1 then
+		motor.left.target = speed
+		motor.right.target = 0
+	end
+	if button.left == 1 and buttons_ENABLED == 1 then
+		motor.left.target = -speed
+		motor.right.target = -speed
+	end
+	
+# the timer is used to make the robot stop after every step to make it more useable and to give the child time to think rather than act blindly
+onevent timer0
+	motor.left.target = 0
+	motor.right.target = 0
+
+# when the robot gets a message and is close enough, it stops, disables the buttons and checks if it has reached the right beacon. It lets the beacon know and indicates the result also directly to the child
+onevent prox.comm
+	if prox.horizontal[2] >2000 then
+		motor.left.target = 0
+		motor.right.target = 0
+		buttons_ENABLED = 0
+		counter = 1
+		if prox.comm.rx ==  sequence[pointer] then
+			prox.comm.tx = sequence[pointer]
+			call leds.top(0,32,0)
+			call sound.system(3)
+			pointer = (pointer + 1) % sequencelength
+		else
+			prox.comm.tx = -1
+			call leds.top(32,0,0)
+			call sound.system(5)
+		end
+	end
+	
+# regular event, therefore used to increment the wait timer until the buttons are enabled again if the child has made a mistake and needs to start over	
+onevent prox
+	if counter > 0 then
+		if counter >= 100 then
+			buttons_ENABLED = 1
+			counter = 0
+			pointer = 0
+		else
+			counter++
+		end
+	end
