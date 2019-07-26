@@ -10,17 +10,6 @@ import Media from 'react-media';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 
-
-function HomeTypo() {
-  return (
-    <Typography variant="body2" color="textSecondary">
-      <Link color="inherit" href="/">
-       Home
-      </Link>
-    </Typography>
-  );
-}
-
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
@@ -62,7 +51,31 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const AbsoluteLogOut = makeStyles(theme =>({
+  LogOutBtn:{
+    position: 'absolute',
+    bottom:60,
+    right:45,
+  },
+  LogOutTxt:{
+    position: 'absolute',
+    bottom:30,
+    right:35,
+  }
+}));
 
+/** main content area jsx */
+const newTestOrViewPrevious = makeStyles(theme =>({
+  
+}));
+
+function NewTestCardIcon(props){
+  return (
+    <SvgIcon {...props}>
+   <path d="M31 12h-11v-11c0-0.552-0.447-1-1-1h-6c-0.553 0-1 0.448-1 1v11h-11c-0.553 0-1 0.448-1 1v6c0 0.553 0.447 1 1 1h11v11c0 0.553 0.447 1 1 1h6c0.553 0 1-0.447 1-1v-11h11c0.553 0 1-0.447 1-1v-6c0-0.552-0.447-1-1-1z"/>
+  </SvgIcon>
+  );
+}
 
 function HomeIcon(props) {
   return (
@@ -89,9 +102,21 @@ function ProfileIcon(props){
   )
 }
 
+
+function LogOutBtn(props){
+    return (
+      <SvgIcon {...props}>
+        <path d="M10 22.5c0 0.438 0.203 1.5-0.5 1.5h-5c-2.484 0-4.5-2.016-4.5-4.5v-11c0-2.484 2.016-4.5 4.5-4.5h5c0.266 0 0.5 0.234 0.5 0.5 0 0.438 0.203 1.5-0.5 1.5h-5c-1.375 0-2.5 1.125-2.5 2.5v11c0 1.375 1.125 2.5 2.5 2.5h4.5c0.391 0 1-0.078 1 0.5zM24.5 14c0 0.266-0.109 0.516-0.297 0.703l-8.5 8.5c-0.187 0.187-0.438 0.297-0.703 0.297-0.547 0-1-0.453-1-1v-4.5h-7c-0.547 0-1-0.453-1-1v-6c0-0.547 0.453-1 1-1h7v-4.5c0-0.547 0.453-1 1-1 0.266 0 0.516 0.109 0.703 0.297l8.5 8.5c0.187 0.187 0.297 0.438 0.297 0.703z"/>
+      </SvgIcon>
+    )
+}
+
 export default function StickyFooter() {
   const classes = useStyles();
+  const classeLogout = AbsoluteLogOut();
 
+
+  /** stick footer */
 function FormRow() {
     return (
       <React.Fragment>
@@ -124,7 +149,6 @@ function FormRow() {
                  <ProfileIcon className={classes.icon} color="primary" />
                   <Typography variant="body2" color="textSecondary">PROFILE 
                         </Typography>
-  
                   </Paper>   
            </Link>
         </Grid>
@@ -134,12 +158,23 @@ function FormRow() {
 
   return (
     <div className={classes.root}>
+   /**** add main content here TODO : card style one with border and other without border */
 
 
 
 
 
 
+
+
+
+
+
+        <Link color="inherit" href="/">
+            <LogOutBtn className={classeLogout.LogOutBtn} color="primary" />
+         <h6 className={classeLogout.LogOutTxt}>LogOut</h6>
+        </Link>
+      
       <CssBaseline />
       <footer className={classes.footer}>
        <Grid container spacing={1}>
