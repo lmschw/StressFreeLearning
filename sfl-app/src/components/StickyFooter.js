@@ -2,16 +2,25 @@ import React from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
 import { blue, red, grey } from '@material-ui/core/colors';
 import SvgIcon from '@material-ui/core/SvgIcon';
-import Media from 'react-media';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
-import Icon from '@material-ui/core/Icon';
+import Popover from '@material-ui/core/Popover';
+import Dialog from '@material-ui/core/Dialog';
+import Slide from '@material-ui/core/Slide';
+import CloseIcon from '@material-ui/icons/Close';
+import IconButton from '@material-ui/core/IconButton';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItem from '@material-ui/core/ListItem';
+import List from '@material-ui/core/List';
+import Divider from '@material-ui/core/Divider';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -22,7 +31,13 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
-
+  appBar: {
+    position: 'relative',
+  },
+  title: {
+    marginLeft: theme.spacing(2),
+    flex: 1,
+  },
   paper: {
     padding: theme.spacing(2),
     textAlign: 'center',
@@ -83,7 +98,18 @@ const useStyles = makeStyles(theme => ({
     top:20,
     left:55, 
 
-  }
+  },
+  popover: {
+    pointerEvents: 'none',
+   
+
+  },
+
+  Logoutpaper: {
+    padding: theme.spacing(1),
+  
+  },
+  
 }));
 
 const AbsoluteLogOut = makeStyles(theme =>({
@@ -98,6 +124,10 @@ const AbsoluteLogOut = makeStyles(theme =>({
     right:35,
   }
 }));
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 
 function HomeIcon(props) {
@@ -143,10 +173,29 @@ function LogOutBtn(props){
 }
 
 
-export default function StickyFooter() {
-  const classes = useStyles();
-  const classeLogout = AbsoluteLogOut();
 
+
+export default function StickyFooter() {
+    const classes = useStyles();
+    const classeLogout = AbsoluteLogOut();
+    const [openNewTest, setOpen] = React.useState(false);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    /** function handles the Open new test Modal */
+  function handleClickOpenNewTest() {
+    setOpen(true);
+  }
+  function handleCloseNewTest() {
+    setOpen(false);
+  }
+  /**popover function on mouse over */
+    function handlePopoverOpen(event){
+      setAnchorEl(event.currentTarget);
+    }
+    function handlePopoverClose(){
+      setAnchorEl(null);
+    }
+    const open = Boolean(anchorEl);
 
   /** stick footer */
 function FormRow() {
@@ -189,9 +238,24 @@ function FormRow() {
   }
 
   return (
-   
     <div className={classes.root}>  
+    
+           <Dialog fullScreen open={openNewTest} onClose={handleCloseNewTest} TransitionComponent={Transition}>
+        <AppBar className={classes.appBar}>
+          <Toolbar>
+            <IconButton edge="start" color="inherit" onClick={handleCloseNewTest} aria-label="close">
+              <CloseIcon />
+            </IconButton>
+            <Typography variant="h6" className={classes.title}>
+              Cancel Test
+            </Typography>
+          </Toolbar>
+        </AppBar>
 
+        <Typography variant="h6" className={classes.title}>
+                  --- stepper view for tests goes here  | select Age group | select Test Mode |  ----
+            </Typography>
+      </Dialog>
 
       <div className={classes.WelcomebackUserStyle}>
           <Typography variant="body2" color="textSecondary">welcome Easy!</Typography>
@@ -200,19 +264,21 @@ function FormRow() {
       <div className={classes.middleContainer}>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
+            <Link color="inherit"  >
               <Paper className={classes.paper1}>
                 <div className={classes.InnerMiddleContainer}>
-                <Fab color="primary" aria-label="add" className={classes.AddNewTestfab}>
+                <Fab color="primary" aria-label="add" className={classes.AddNewTestfab} onClick={handleClickOpenNewTest}>
                         <AddIcon />
                   </Fab>
                   <Typography variant="body1" color="textSecondary">Start New Test 
                         </Typography>
                 </div>
-                 
               </Paper>
+              </Link>
             </Grid>
 
             <Grid item xs={12} sm={6}>
+            <Link color="inherit" href="/">
               <Paper className={classes.paper1}>
                    <div className={classes.InnerMiddleContainer}>
                   <ViewPreviousIcon className={classes.largeIcon} color="primary"/>
@@ -220,6 +286,7 @@ function FormRow() {
                         </Typography>
                   </div>
                 </Paper>
+                  </Link>
             </Grid>
           </Grid>
       </div>
@@ -230,9 +297,34 @@ function FormRow() {
 
 
 
-        <Link color="inherit" href="/">
+        <Link color="inherit" href="/" 
+            aria-owns={open ? 'mouse-over-popover': undefined}
+            aria-haspopup = "true"
+            onMouseEnter = {handlePopoverOpen}
+            onMouseLeave = {handlePopoverClose}
+            >
             <LogOutBtn className={classeLogout.LogOutBtn} color="primary" />
             <h6 className={classeLogout.LogOutTxt}>LogOut</h6>
+
+          <Popover id="mouse-over-popover"
+                    className={classes.popover}
+                    classes={{
+                      paper:classes.Logoutpaper,
+                    }}
+              open={open}
+              anchorEl={anchorEl}
+              anchorPosition={{ bottom: 70, left: 400 }}
+              anchorOrigin ={{
+                vertical:'bottom',
+                horizontal:'left',
+              }}
+              transformOrigin = {{
+                vertical:'top',
+                horizontal:'left',
+              }}
+              onClose={handlePopoverClose}
+              disableRestoreFocus> you are about to logout from app, Remember to save all test!
+            </Popover>
         </Link>
       
       <CssBaseline />
