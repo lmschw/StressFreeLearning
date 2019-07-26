@@ -4,11 +4,14 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
-import { blue, red } from '@material-ui/core/colors';
+import { blue, red, grey } from '@material-ui/core/colors';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import Media from 'react-media';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import Icon from '@material-ui/core/Icon';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -21,9 +24,17 @@ const useStyles = makeStyles(theme => ({
   },
 
   paper: {
-    padding: theme.spacing(1),
+    padding: theme.spacing(2),
     textAlign: 'center',
     color: theme.palette.text.secondary,
+  },
+
+  paper1: {
+    padding: theme.spacing(2),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+    height: '30vh',
+    
   },
 
   icon: {
@@ -46,9 +57,33 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     padding: theme.spacing(2),
     marginTop: 'auto',
-    backgroundColor: '',
     width:"100%",
   },
+  middleContainer: {
+    display:'flex',
+    marginTop:'auto',
+    width:'100%'
+  },
+  InnerMiddleContainer:{
+    margin: theme.spacing(6),
+  },
+
+  AddNewTestfab: {
+    margin: theme.spacing(3),
+  },
+
+  largeIcon: {
+    width: 60,
+    height: 60,
+    margin: theme.spacing(3),
+  },
+
+  WelcomebackUserStyle:{
+    position: 'absolute',
+    top:20,
+    left:55, 
+
+  }
 }));
 
 const AbsoluteLogOut = makeStyles(theme =>({
@@ -64,18 +99,6 @@ const AbsoluteLogOut = makeStyles(theme =>({
   }
 }));
 
-/** main content area jsx */
-const newTestOrViewPrevious = makeStyles(theme =>({
-  
-}));
-
-function NewTestCardIcon(props){
-  return (
-    <SvgIcon {...props}>
-   <path d="M31 12h-11v-11c0-0.552-0.447-1-1-1h-6c-0.553 0-1 0.448-1 1v11h-11c-0.553 0-1 0.448-1 1v6c0 0.553 0.447 1 1 1h11v11c0 0.553 0.447 1 1 1h6c0.553 0 1-0.447 1-1v-11h11c0.553 0 1-0.447 1-1v-6c0-0.552-0.447-1-1-1z"/>
-  </SvgIcon>
-  );
-}
 
 function HomeIcon(props) {
   return (
@@ -93,6 +116,14 @@ function AllTestIcon(props){
     </SvgIcon>
   )
 }
+function ViewPreviousIcon(props){
+  return (
+    <SvgIcon {...props}>
+        <path d="M6 6v-4c0-1.1 0.9-2 2-2h10c1.105 0 2 0.895 2 2v0 10c0 1.105-0.895 2-2 2v0h-4v4c0 1.105-0.895 2-2 2v0h-10c-1.105 0-2-0.895-2-2v0-10c0-1.1 0.9-2 2-2h4zM8 6h4c1.105 0 2 0.895 2 2v0 4h4v-10h-10v4zM2 8v10h10v-10h-10z"/>
+    </SvgIcon>
+  )
+}
+
 
 function ProfileIcon(props){
   return (
@@ -110,6 +141,7 @@ function LogOutBtn(props){
       </SvgIcon>
     )
 }
+
 
 export default function StickyFooter() {
   const classes = useStyles();
@@ -157,12 +189,40 @@ function FormRow() {
   }
 
   return (
-    <div className={classes.root}>
-   /**** add main content here TODO : card style one with border and other without border */
+   
+    <div className={classes.root}>  
 
 
+      <div className={classes.WelcomebackUserStyle}>
+          <Typography variant="body2" color="textSecondary">welcome Easy!</Typography>
+      </div>
+    
+      <div className={classes.middleContainer}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6}>
+              <Paper className={classes.paper1}>
+                <div className={classes.InnerMiddleContainer}>
+                <Fab color="primary" aria-label="add" className={classes.AddNewTestfab}>
+                        <AddIcon />
+                  </Fab>
+                  <Typography variant="body1" color="textSecondary">Start New Test 
+                        </Typography>
+                </div>
+                 
+              </Paper>
+            </Grid>
 
-
+            <Grid item xs={12} sm={6}>
+              <Paper className={classes.paper1}>
+                   <div className={classes.InnerMiddleContainer}>
+                  <ViewPreviousIcon className={classes.largeIcon} color="primary"/>
+                     <Typography variant="body1" color="textSecondary"> View Previous Tests and Result
+                        </Typography>
+                  </div>
+                </Paper>
+            </Grid>
+          </Grid>
+      </div>
 
 
 
@@ -172,7 +232,7 @@ function FormRow() {
 
         <Link color="inherit" href="/">
             <LogOutBtn className={classeLogout.LogOutBtn} color="primary" />
-         <h6 className={classeLogout.LogOutTxt}>LogOut</h6>
+            <h6 className={classeLogout.LogOutTxt}>LogOut</h6>
         </Link>
       
       <CssBaseline />
