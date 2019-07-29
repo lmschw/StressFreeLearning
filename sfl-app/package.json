@@ -33,5 +33,14 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+
+  "config": {
+    "nuxt": {
+      "host": "192.168.10.131",
+      "port": "3333"
+    }
+   }
+
+  
 }

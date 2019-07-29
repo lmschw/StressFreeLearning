@@ -21,6 +21,9 @@ import Divider from '@material-ui/core/Divider';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import Media from "react-media";
+import NewTest from './NewTest';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -45,11 +48,11 @@ const useStyles = makeStyles(theme => ({
   },
 
   paper1: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(6),
     textAlign: 'center',
     color: theme.palette.text.secondary,
-    height: '30vh',
     
+   
   },
 
   icon: {
@@ -90,7 +93,7 @@ const useStyles = makeStyles(theme => ({
   largeIcon: {
     width: 60,
     height: 60,
-    margin: theme.spacing(3),
+    margin: theme.spacing(2.8),
   },
 
   WelcomebackUserStyle:{
@@ -178,7 +181,7 @@ function LogOutBtn(props){
 export default function StickyFooter() {
     const classes = useStyles();
     const classeLogout = AbsoluteLogOut();
-    const [openNewTest, setOpen] = React.useState(false);
+    const [openNewTest, setOpen] = React.useState(true);
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     /** function handles the Open new test Modal */
@@ -251,14 +254,11 @@ function FormRow() {
             </Typography>
           </Toolbar>
         </AppBar>
-
-        <Typography variant="h6" className={classes.title}>
-                  --- stepper view for tests goes here  | select Age group | select Test Mode |  ----
-            </Typography>
+          <NewTest />
       </Dialog>
-
+      
       <div className={classes.WelcomebackUserStyle}>
-          <Typography variant="body2" color="textSecondary">welcome Easy!</Typography>
+          <Typography variant="body2" color="textSecondary">Bonjour Lilly!</Typography>
       </div>
     
       <div className={classes.middleContainer}>
@@ -266,13 +266,13 @@ function FormRow() {
             <Grid item xs={12} sm={6}>
             <Link color="inherit"  >
               <Paper className={classes.paper1}>
-                <div className={classes.InnerMiddleContainer}>
-                <Fab color="primary" aria-label="add" className={classes.AddNewTestfab} onClick={handleClickOpenNewTest}>
-                        <AddIcon />
-                  </Fab>
-                  <Typography variant="body1" color="textSecondary">Start New Test 
-                        </Typography>
-                </div>
+                                     <Fab color="primary" aria-label="add" className={classes.AddNewTestfab} onClick={handleClickOpenNewTest}>
+                                  <AddIcon />
+                                    </Fab>
+                                     <Typography variant="body1" color="textSecondary">Start New Test 
+                                       </Typography>
+          
+                
               </Paper>
               </Link>
             </Grid>
@@ -280,11 +280,10 @@ function FormRow() {
             <Grid item xs={12} sm={6}>
             <Link color="inherit" href="/">
               <Paper className={classes.paper1}>
-                   <div className={classes.InnerMiddleContainer}>
+                  
                   <ViewPreviousIcon className={classes.largeIcon} color="primary"/>
                      <Typography variant="body1" color="textSecondary"> View Previous Tests and Result
                         </Typography>
-                  </div>
                 </Paper>
                   </Link>
             </Grid>
@@ -313,7 +312,7 @@ function FormRow() {
                     }}
               open={open}
               anchorEl={anchorEl}
-              anchorPosition={{ bottom: 70, left: 400 }}
+            
               anchorOrigin ={{
                 vertical:'bottom',
                 horizontal:'left',
