@@ -24,6 +24,12 @@ import Button from '@material-ui/core/Button';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Media from "react-media";
 import NewTest from './NewTest';
+import BottomNavigation from '@material-ui/core/BottomNavigation';
+import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
+import { Hidden } from '@material-ui/core';
+import { borders } from '@material-ui/system';
+import Box from '@material-ui/core/Box';
+import { shadows } from '@material-ui/system';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -51,12 +57,10 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(6),
     textAlign: 'center',
     color: theme.palette.text.secondary,
-    
-   
-  },
+   },
 
   icon: {
-    margin: theme.spacing(2),
+  
   },
 
   iconHover: {
@@ -72,15 +76,14 @@ const useStyles = makeStyles(theme => ({
   },
 
   footer: {
-    display: 'flex',
-    padding: theme.spacing(2),
-    marginTop: 'auto',
-    width:"100%",
+   width:'100%',
+   position:'absolute',
+   bottom:1,
+   left:0, 
   },
   middleContainer: {
-    display:'flex',
-    marginTop:'auto',
-    width:'100%'
+    width:'100%',
+    marginTop:-20
   },
   InnerMiddleContainer:{
     margin: theme.spacing(6),
@@ -104,29 +107,30 @@ const useStyles = makeStyles(theme => ({
   },
   popover: {
     pointerEvents: 'none',
-   
-
   },
 
   Logoutpaper: {
     padding: theme.spacing(1),
   
   },
-  
-}));
-
-const AbsoluteLogOut = makeStyles(theme =>({
-  LogOutBtn:{
-    position: 'absolute',
-    bottom:60,
-    right:45,
+  logOutDiv: {
+      position:'absolute',
+      top:19,
+      right:55
   },
-  LogOutTxt:{
-    position: 'absolute',
-    bottom:30,
-    right:35,
+
+  LogOutBtn:{
+    fontSize:'15px',
+    marginLeft:theme.spacing(1),
+  },
+
+  addSpacing:{
+    marginTop:theme.spacing(2.5)
+  },
+  bottomNavigationStyle:{
   }
 }));
+
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -180,10 +184,14 @@ function LogOutBtn(props){
 
 export default function StickyFooter() {
     const classes = useStyles();
-    const classeLogout = AbsoluteLogOut();
-    const [openNewTest, setOpen] = React.useState(true);
+    const [openNewTest, setOpen] = React.useState(false);
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [value, setValue] = React.useState('Home');
 
+    /** function update navigation state */
+    function handleNavigationChange(event, newValue) {
+      setValue(newValue);
+    }
     /** function handles the Open new test Modal */
   function handleClickOpenNewTest() {
     setOpen(true);
@@ -204,8 +212,7 @@ export default function StickyFooter() {
 function FormRow() {
     return (
       <React.Fragment>
-
-        <Grid item xs={4}>
+        <Grid item xs={6}>
            <Link color="inherit" href="/">
                <Paper className={classes.paper}>
                  <HomeIcon className={classes.icon} color="primary" />
@@ -216,7 +223,7 @@ function FormRow() {
            </Link>
         </Grid>
     
-        <Grid item xs={4}>
+        <Grid item xs={6}>
            <Link color="inherit" href="/">
                <Paper className={classes.paper}>
                  <AllTestIcon className={classes.icon} color="primary" />
@@ -227,7 +234,7 @@ function FormRow() {
            </Link>
         </Grid>
 
-        <Grid item xs={4}>
+        <Grid item xs={6}>
            <Link color="inherit" href="/">
                <Paper className={classes.paper}>
                  <ProfileIcon className={classes.icon} color="primary" />
@@ -261,12 +268,51 @@ function FormRow() {
           <Typography variant="body2" color="textSecondary">Bonjour Lilly!</Typography>
       </div>
     
+      <div className={classes.logOutDiv}>
+        <Link color="inherit" 
+            aria-owns={open ? 'mouse-over-popover': undefined}
+            aria-haspopup = "true"
+            onMouseEnter = {handlePopoverOpen}
+            onMouseLeave = {handlePopoverClose}
+            >
+          
+          <Typography variant="body2" color="textSecondary">
+            logout
+            <LogOutBtn className={classes.LogOutBtn} color="primary" />
+          </Typography>
+      
+
+          <Popover id="mouse-over-popover"
+                    className={classes.popover}
+                    classes={{
+                      paper:classes.Logoutpaper,
+                    }}
+              open={open}
+              anchorEl={anchorEl}
+            
+              anchorOrigin ={{
+                vertical:'bottom',
+                horizontal:'left',
+              }}
+              transformOrigin = {{
+                vertical:'top',
+                horizontal:'left',
+              }}
+              onClose={handlePopoverClose}
+              disableRestoreFocus> you are about to logout from app!
+            </Popover>
+        </Link>
+        </div>
+    
+      
       <div className={classes.middleContainer}>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
             <Link color="inherit"  >
               <Paper className={classes.paper1}>
-                                     <Fab color="primary" aria-label="add" className={classes.AddNewTestfab} onClick={handleClickOpenNewTest}>
+                                     <Fab color="primary" aria-label="add"
+                                      className={classes.AddNewTestfab} 
+                                      onClick={handleClickOpenNewTest}>
                                   <AddIcon />
                                     </Fab>
                                      <Typography variant="body1" color="textSecondary">Start New Test 
@@ -290,50 +336,23 @@ function FormRow() {
           </Grid>
       </div>
 
+      <div className={classes.addSpacing}></div>        
+      <div className={classes.addSpacing}></div>     
+      <div className={classes.addSpacing}></div>  
 
+              <CssBaseline />
+     <footer className={classes.footer}>
+       <Box boxShadow={3}>
+        <BottomNavigation value={value} onChange={handleNavigationChange} className={classes.bottomNavigationStyle}>
+              <BottomNavigationAction label="Home" value="Home" icon={<HomeIcon className={classes.icon} color="primary" />} />
+              <BottomNavigationAction label="All Tests" value="All Tests" icon={<AllTestIcon className={classes.icon} color="primary" />} />
+              <BottomNavigationAction label="Profile" value="Profile" icon={ <ProfileIcon className={classes.icon} color="primary" />} />
+        </BottomNavigation>    
+        </Box>
+     </footer>
+     
 
-
-
-
-
-        <Link color="inherit" href="/" 
-            aria-owns={open ? 'mouse-over-popover': undefined}
-            aria-haspopup = "true"
-            onMouseEnter = {handlePopoverOpen}
-            onMouseLeave = {handlePopoverClose}
-            >
-            <LogOutBtn className={classeLogout.LogOutBtn} color="primary" />
-            <h6 className={classeLogout.LogOutTxt}>LogOut</h6>
-
-          <Popover id="mouse-over-popover"
-                    className={classes.popover}
-                    classes={{
-                      paper:classes.Logoutpaper,
-                    }}
-              open={open}
-              anchorEl={anchorEl}
-            
-              anchorOrigin ={{
-                vertical:'bottom',
-                horizontal:'left',
-              }}
-              transformOrigin = {{
-                vertical:'top',
-                horizontal:'left',
-              }}
-              onClose={handlePopoverClose}
-              disableRestoreFocus> you are about to logout from app, Remember to save all test!
-            </Popover>
-        </Link>
-      
-      <CssBaseline />
-      <footer className={classes.footer}>
-       <Grid container spacing={1}>
-        <Grid container item xs={12} spacing={3}>
-          <FormRow />
-        </Grid>
-      </Grid>
-      </footer>
+  
     </div>
   );
 }
