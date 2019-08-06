@@ -1,17 +1,21 @@
 # DRAWING WALKER - to be controlled directly be the child to complete a Connect The Numbers game. This robot should be equipped with a pen
 
-var sequence[] = [1,2,3,4,5]	# the expected sequence of numbers
+var sequence[] = [1,2,3]	# the expected sequence of numbers
 var sequencelength = 5	# the length of the sequence
 var pointer = 0	# points to the next expected number
 var speed = 100
 var counter = 0
 var buttons_ENABLED = 1
+var currentbeacon = 0
+var rightbeacon = 0
+var stay_off = 0
+var stayoffcounter = 0
 
 # resetting everything that might have been used
 motor.left.target = 0
 motor.right.target = 0
 
-call leds.top(0,0,0)
+call leds.top(12,12,12)
 call leds.circle(0,0,0,0,0,0,0,0)
 
 call sound.system(-1)
@@ -21,6 +25,7 @@ call prox.comm.enable(1)
 
 # setting the timer
 timer.period[0] = 2000
+timer.period[1] = 0
 
 # the buttons are used to navigate the robot
 onevent buttons
@@ -36,7 +41,7 @@ onevent buttons
 		motor.left.target = speed
 		motor.right.target = 0
 	end
-	if button.left == 1 and buttons_ENABLED == 1 then
+	if button.backward == 1 and buttons_ENABLED == 1 then
 		motor.left.target = -speed
 		motor.right.target = -speed
 	end
@@ -48,31 +53,60 @@ onevent timer0
 
 # when the robot gets a message and is close enough, it stops, disables the buttons and checks if it has reached the right beacon. It lets the beacon know and indicates the result also directly to the child
 onevent prox.comm
-	if prox.horizontal[2] >2000 then
+	if prox.horizontal[2] >2000 or prox.horizontal[1] > 2000 or prox.horizontal[3] > 2000 and pointer < sequencelength then
+		stay_off = 1
 		motor.left.target = 0
 		motor.right.target = 0
 		buttons_ENABLED = 0
-		counter = 1
+		if prox.comm.rx != currentbeacon then
+			counter = 1
+			currentbeacon = prox.comm.rx
+		end
 		if prox.comm.rx ==  sequence[pointer] then
 			prox.comm.tx = sequence[pointer]
-			call leds.top(0,32,0)
-			call sound.system(3)
-			pointer = (pointer + 1) % sequencelength
+			rightbeacon = 1
+			pointer = pointer + 1
 		else
 			prox.comm.tx = -1
-			call leds.top(32,0,0)
-			call sound.system(5)
 		end
 	end
 	
 # regular event, therefore used to increment the wait timer until the buttons are enabled again if the child has made a mistake and needs to start over	
 onevent prox
-	if counter > 0 then
-		if counter >= 100 then
-			buttons_ENABLED = 1
-			counter = 0
-			pointer = 0
+	if pointer > sequencelength then
+		#call sound.system(4)
+		call leds.top(32,0,32)
+	elseif counter > 0 then
+		if counter >= 50 then
+			if stay_off == 1 then
+				stayoffcounter = 1
+			end
+			stay_off = 0
 		else
 			counter++
+			if rightbeacon != 0 then
+				call leds.top(0,32,0)
+				#call sound.system(3)
+			else
+				call leds.top(32,0,0)
+				#call sound.system(5)
+			end
+		end
+		if stay_off == 0 and stayoffcounter > 0 then
+			if stayoffcounter >= 5 then
+				if rightbeacon == 0 then
+					pointer = 0
+				end
+				buttons_ENABLED = 1
+				counter = 0
+				stayoffcounter = 0
+				rightbeacon = 0
+				prox.comm.tx = 0
+				currentbeacon = 0
+				call leds.top(12,12,12)
+			else
+				stayoffcounter++
+			end
 		end
 	end
+	

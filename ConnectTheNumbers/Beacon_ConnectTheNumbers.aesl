@@ -4,24 +4,29 @@
 var id = 1		# the value that the beacon represents
 var counter = 0	# counting how long to display the response to the walker when encountered
 
-
 # setting up
 call leds.top(0,32,32)
 
 timer.period[0] = 2000
 
-call prox.comm.enable(1)
 prox.comm.tx = id
+
+onevent rc5
+	if rc5.command == 1 then
+		call prox.comm.enable(1)
+	end
 
 # regular event. handles the waiting time after getting a message from the walker.
 onevent prox
 	if counter == 0 then
-		call sound.system(4)
+		call leds.top(0,32,32)
 	else
-		if counter >= 100 then
+		if counter >= 50 then
 			call leds.top(0,0,0)
 			call sound.system(1)
 			counter = -1
+			call prox.comm.enable(0)
+
 		elseif counter != -1 then
 			counter++
 		end
@@ -30,11 +35,12 @@ onevent prox
 # if the beacon gets a signal when the robot is close enough, it checks if the robot confirms by sending back the beacons ID. Sets of the counter and displays helpful behaviour	
 onevent prox.comm
 	if prox.horizontal[0] > 2000 or prox.horizontal[1] > 2000 or prox.horizontal[2] > 2000 or prox.horizontal[3] > 2000 or prox.horizontal[4] > 2000 then
-		counter = 1
+		if counter == 0 then
+			counter = 1
+		end
 		if prox.comm.rx == id then
 			call leds.top(0,32,0)
 			call sound.system(3)
-			call prox.comm.enable(0)
 		else
 			call leds.top(32,0,0)
 			call sound.system(5)		
