@@ -1,9 +1,10 @@
 # BEACON - the targets for the Connect The Numbers game. Should be set out according to a pattern, e.g. a star or a heart
 
 # variables
-var id = 3		# the value that the beacon represents
+var id = 1		# the value that the beacon represents
 var counter = 0	# counting how long to display the response to the walker when encountered
 var sound = 1
+var right = 0
 
 # setting up
 call leds.top(0,32,32)
@@ -19,11 +20,20 @@ onevent prox
 	if counter == 0 then
 		call leds.top(0,32,32)
 	else
-		if counter >= 50 then
+		if counter == 50 then
 			call leds.top(0,0,0)
 			call sound.system(1)
-			counter = -1
 			call prox.comm.enable(0)
+			counter++
+			if right == 1  then
+				counter = -1
+			end
+		elseif counter >= 60 then
+			counter = -1
+			call leds.top(0,32,32)
+			call prox.comm.enable(1)
+			prox.comm.tx = id
+			emit reset
 		elseif counter != -1 then
 			counter++
 		end
@@ -35,13 +45,15 @@ onevent prox.comm
 		if counter == 0 then
 			counter = 1
 		end
-		if prox.comm.rx == id then
+		if prox.comm.rx == id and counter <=50 then
 			call leds.top(0,32,0)
+			right = 1
 			if sound == 1  then
 				call sound.system(3)
 			end
 			sound = (sound + 1) % 8
-		else
+		elseif counter <= 50 then
+			right = 0
 			call leds.top(32,0,0)
 			if sound == 1  then
 				call sound.system(5)
@@ -49,5 +61,10 @@ onevent prox.comm
 			sound = (sound + 1) % 8
 		end
 	end
+	
+onevent reset
+	counter = 0
+	call prox.comm.enable(1)
+	prox.comm.tx = id
 
 	

@@ -1,7 +1,7 @@
 # DRAWING WALKER - to be controlled directly be the child to complete a Connect The Numbers game. This robot should be equipped with a pen
 
 var sequence[] = [1,2,3]	# the expected sequence of numbers
-var sequencelength = 5	# the length of the sequence
+var sequencelength = 3	# the length of the sequence
 var pointer = 0	# points to the next expected number
 var speed = 100
 var counter = 0
@@ -53,7 +53,7 @@ onevent timer0
 
 # when the robot gets a message and is close enough, it stops, disables the buttons and checks if it has reached the right beacon. It lets the beacon know and indicates the result also directly to the child
 onevent prox.comm
-	if prox.horizontal[2] >2000 or prox.horizontal[1] > 2000 or prox.horizontal[3] > 2000 and pointer < sequencelength then
+	if (prox.horizontal[2] >3000 or prox.horizontal[1] > 3000 or prox.horizontal[3] > 3000 or prox.horizontal[4] > 3000 or prox.horizontal[0] > 3000) and pointer < sequencelength then
 		stay_off = 1
 		motor.left.target = 0
 		motor.right.target = 0
@@ -65,17 +65,19 @@ onevent prox.comm
 		if prox.comm.rx ==  sequence[pointer] then
 			prox.comm.tx = sequence[pointer]
 			rightbeacon = 1
-			pointer = pointer + 1
 		else
-			prox.comm.tx = -1
+			prox.comm.tx = 2056
 		end
 	end
 	
 # regular event, therefore used to increment the wait timer until the buttons are enabled again if the child has made a mistake and needs to start over	
 onevent prox
-	if pointer > sequencelength then
-		#call sound.system(4)
-		call leds.top(32,0,32)
+	if pointer >= sequencelength then
+			call leds.top(0,0,0)
+			call sound.system(1)
+			counter = -1
+			call prox.comm.enable(0)
+			pointer = -1
 	elseif counter > 0 then
 		if counter >= 50 then
 			if stay_off == 1 then
@@ -96,6 +98,8 @@ onevent prox
 			if stayoffcounter >= 5 then
 				if rightbeacon == 0 then
 					pointer = 0
+				else
+					pointer = pointer + 1
 				end
 				buttons_ENABLED = 1
 				counter = 0
