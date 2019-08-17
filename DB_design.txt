@@ -1,0 +1,19 @@
+CREATE TABLE children (childID bigint PRIMARY KEY, firstname varchar(20) NOT NULL, lastname varchar(50) NOT NULL)
+
+CREATE TABLE schools (schoolID int PRIMARY KEY, schoolname varchar(50) NOT NULL, street varchar(30) NOT NULL, number int NOT NULL, city varchar(30) NOT NULL)
+
+CREATE TABLE testers (testerID bigint PRIMARY KEY, firstname varchar(20) NOT NULL, lastname varchar(50) NOT NULL, school int DEFAULT 1 REFERENCES schools(schoolID) ON DELETE SET DEFAULT, principal bit NOT NULL, login varchar(30) NOT NULL UNIQUE, password varchar(30) NOT NULL)
+
+CREATE TABLE tests (testID bigint PRIMARY KEY, child bigint REFERENCES children(childID) ON DELETE RESTRICT, tester bigint REFERENCES testers(testerID) ON DELETE RESTRICT, agegroup text CONSTRAINT age_groups CHECK (agegroup in ('4-5','6-8', '9-12')), date date NOT NULL, datetime datetimeoffset NOT NULL, testtype text CONSTRAINT testtypes CHECK (testtype in ('full','lettersonly','sentencesonly','numbersonly')))
+
+CREATE TABLE errorCorrectionLetters (test bigint REFERENCES tests(testID) ON DELETE RESTRICT, word varchar(20) NOT NULL, duration time NOT NULL, wrongattempts int NOT NULL, PRIMARY KEY(test, word))
+
+CREATE TABLE fillGapsLetters (test bigint REFERENCES tests(testID) ON DELETE RESTRICT, word varchar(20) NOT NULL, duration time NOT NULL, wrongattempts real NOT NULL, PRIMARY KEY(test, word))
+
+CREATE TABLE hearAssembleLetters (test bigint REFERENCES tests(testID) ON DELETE RESTRICT, word varchar(20) NOT NULL, duration time NOT NULL, correctLetters int NOT NULL, PRIMARY KEY(test, word))
+
+CREATE TABLE freePlayLetters (test bigint REFERENCES tests(testID) ON DELETE RESTRICT, letterset int NOT NULL, correctTwoLetters int NOT NULL, correctThreeLetters int NOT NULL, correctFourLetters int NOT NULL, correctFiveLetters int NOT NULL, correctSixLetters int NOT NULL, wrongWords int NOT NULL, PRIMARY KEY(test, letterset))
+
+CREATE TABLE connectTheNumbers (test bigint REFERENCES tests(testID) ON DELETE RESTRICT, sequenceID int NOT NULL, failures int NOT NULL, duration time NOT NULL, PRIMARY KEY(test, sequenceID))
+
+CREATE TABLE overallResults (test bigint REFERENCES tests(testID) ON DELETE RESTRICT, tasktype text CONSTRAINT tasktypes CHECK (tasktype in ('error correction','fill the gaps','hear and assemble','freeplay', 'connect the numbers')), correctCounter real NOT NULL)
